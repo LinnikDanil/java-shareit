@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class ItemRepositoryImpl implements ItemRepository{
+public class ItemRepositoryImpl implements ItemRepository {
     private final UserRepository userRepository;
     private final HashMap<Long, Item> items;
     private long id = 0;

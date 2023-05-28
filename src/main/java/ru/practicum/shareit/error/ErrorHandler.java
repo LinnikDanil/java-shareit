@@ -35,13 +35,13 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse ItemNotFound(final ItemNotFoundException e) {
+    public ErrorResponse itemNotFound(final ItemNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse ItemOwnerIsDifferent(final ItemOwnerIsDefferentException e) {
+    public ErrorResponse itemOwnerIsDifferent(final ItemOwnerIsDefferentException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

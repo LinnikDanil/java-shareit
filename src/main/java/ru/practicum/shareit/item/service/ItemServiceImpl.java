@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ItemServiceImpl implements ItemService{
+public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
 
     @Override
@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService{
 
         if (existingItem.getOwner().getId() != userId) {
             throw new ItemOwnerIsDefferentException(String.format("Невозможно обновить предмет с id = %s, " +
-                    "так как у его владельца id = %d, а в аргумент поступило id = %d.",
+                            "так как у его владельца id = %d, а в аргумент поступило id = %d.",
                     itemId, existingItem.getOwner().getId(), userId));
         }
 
