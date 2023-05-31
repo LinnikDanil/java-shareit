@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.exception.ItemOwnerIsDefferentException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repositrory.ItemRepository;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,10 +19,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<ItemDto> getUserItems(long userId) {
         log.info("Вывод всех предметов пользователя с id = {}:", userId);
+
+        userRepository.getUserById(userId); //Проверка на существование пользователя
 
         return itemRepository.getUserItems(userId).stream()
                 .map(ItemMapper::toItemDto)
@@ -46,9 +50,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto addItem(Item item, long userId) {
+    public ItemDto addItem(ItemDto itemDto, long userId) {
         log.info("Добавление предмета пользователю с id = {}:", userId);
-        return ItemMapper.toItemDto(itemRepository.addItem(item, userId));
+
+        Item item = ItemMapper.toItem(itemDto);
+        item.setOwner(userRepository.getUserById(userId));
+
+        return ItemMapper.toItemDto(itemRepository.addItem(item));
     }
 
     @Override

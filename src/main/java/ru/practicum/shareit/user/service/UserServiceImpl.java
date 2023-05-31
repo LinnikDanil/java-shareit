@@ -35,9 +35,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto saveUser(User user) {
+    public UserDto saveUser(UserDto userDto) {
         log.info("Сохранение пользователя:");
-        return UserMapper.toUserDto(userRepository.saveNewUser(user));
+        return UserMapper.toUserDto(userRepository.saveNewUser(UserMapper.toUser(userDto)));
     }
 
     @Override
@@ -46,8 +46,12 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.getUserById(userId);
 
         if (userDto.getName() != null) {
-            log.info("Имя пользователя обновлено на {}.", userDto.getName());
-            existingUser.setName(userDto.getName());
+            if (userDto.getName().isBlank()) {
+                throw new IllegalArgumentException("Имя пользователя не может быть пустым");
+            } else {
+                existingUser.setName(userDto.getName());
+                log.info("Имя пользователя обновлено на {}.", userDto.getName());
+            }
         }
 
         if (userDto.getEmail() != null) {

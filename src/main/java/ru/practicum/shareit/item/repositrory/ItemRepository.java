@@ -11,7 +11,7 @@ public interface ItemRepository {
 
     List<Item> searchItems(String text);
 
-    Item addItem(Item item, long userId);
+    Item addItem(Item item);
 
     Item updateItem(Item item, long itemId, long userId);
 }

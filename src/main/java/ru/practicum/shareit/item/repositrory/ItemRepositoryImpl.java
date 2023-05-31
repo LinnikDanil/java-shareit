@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +14,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemRepositoryImpl implements ItemRepository {
-    private final UserRepository userRepository;
     private final HashMap<Long, Item> items;
     private long id = 0;
 
     @Override
     public List<Item> getUserItems(long userId) {
-        userRepository.getUserById(userId); //Проверка на существование пользователя
         return items.values().stream()
                 .filter(item -> item.getOwner().getId() == userId)
                 .collect(Collectors.toList());
@@ -52,8 +49,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Item addItem(Item item, long userId) {
-        item.setOwner(userRepository.getUserById(userId));
+    public Item addItem(Item item) {
         item.setId(generatedNewId());
         items.put(item.getId(), item);
         log.info("Предмет сохранён с id = {}.", item.getId());
