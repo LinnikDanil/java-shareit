@@ -3,15 +3,20 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemOwnerIsDefferentException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repositrory.ItemRepository;
+import ru.practicum.shareit.user.exception.UserNotFoundException;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,13 +26,17 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public List<ItemDto> getUserItems(long userId) {
         log.info("Вывод всех предметов пользователя с id = {}:", userId);
 
-        userRepository.getUserById(userId); //Проверка на существование пользователя
+        if (userRepository.findById(userId).isEmpty()) {
+            log.warn("Пользователя с id = {} не существует.", userId);
+            throw new UserNotFoundException(String.format("Пользователь с id = %s не найден", userId));
+        }; //Проверка на существование пользователя
 
-        return itemRepository.getUserItems(userId).stream()
+        return itemRepository.findAllByOwnerId(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
@@ -35,7 +44,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItemById(long itemId) {
         log.info("Вывод предмета с id = {}:", itemId);
-        return ItemMapper.toItemDto(itemRepository.getItemById(itemId));
+
+        Optional<Item> optItem = itemRepository.findById(itemId);
+        if (optItem.isEmpty()) {
+            log.warn("Предмета с id = {} не существует.", itemId);
+            throw new ItemNotFoundException(String.format("Предмета с id = %s не существует", itemId));
+        }
+
+        return ItemMapper.toItemDto(optItem.get());
     }
 
     @Override
@@ -44,25 +60,39 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty()) {
             return Collections.emptyList();
         }
-        return itemRepository.searchItems(text).stream()
+        return itemRepository.search(text).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public ItemDto addItem(ItemDto itemDto, long userId) {
         log.info("Добавление предмета пользователю с id = {}:", userId);
 
-        Item item = ItemMapper.toItem(itemDto);
-        item.setOwner(userRepository.getUserById(userId));
+        Optional<User> optUser = userRepository.findById(userId);
+        if (optUser.isEmpty()){
+            log.warn("Пользователя с id = {} не существует.", userId);
+            throw new UserNotFoundException(String.format("Пользователя с id = %s не существует", userId));
+        }
 
-        return ItemMapper.toItemDto(itemRepository.addItem(item));
+        Item item = ItemMapper.toItem(itemDto);
+        item.setOwner(optUser.get());
+
+        return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
+    @Transactional
     @Override
     public ItemDto updateItem(ItemDto itemDto, long itemId, long userId) {
         log.info("Обновление предмета с id = {} у пользователя с id = {}:", itemId, userId);
-        Item existingItem = itemRepository.getItemById(itemId);
+
+        Optional<Item> optExistingItem = itemRepository.findById(itemId);
+        if (optExistingItem.isEmpty()) {
+            log.warn("Предмета с id = {} не существует.", itemId);
+            throw new ItemNotFoundException(String.format("Предмета с id = %s не существует", itemId));
+        }
+        Item existingItem = optExistingItem.get();
 
         if (existingItem.getOwner().getId() != userId) {
             throw new ItemOwnerIsDefferentException(String.format("Невозможно обновить предмет с id = %s, " +
@@ -75,20 +105,20 @@ public class ItemServiceImpl implements ItemService {
         Boolean available = itemDto.getAvailable();
 
         if (name != null) {
-            log.info("Имя предмета обновлено на {}.", name);
             existingItem.setName(name);
+            log.info("Имя предмета обновлено на {}.", name);
         }
 
         if (description != null) {
-            log.info("Описание предмета обновлено на {}.", description);
             existingItem.setDescription(description);
+            log.info("Описание предмета обновлено на {}.", description);
         }
 
         if (available != null && available != existingItem.getAvailable()) {
-            log.info("Статус предмета обновлён на {}.", available);
             existingItem.setAvailable(available);
+            log.info("Статус предмета обновлён на {}.", available);
         }
 
-        return ItemMapper.toItemDto(itemRepository.updateItem(existingItem, itemId, userId));
+        return ItemMapper.toItemDto(itemRepository.save(existingItem));
     }
 }

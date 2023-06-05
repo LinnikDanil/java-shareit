@@ -14,11 +14,10 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl{
     private final HashMap<Long, User> users;
     private int id = 0;
 
-    @Override
     public List<User> getAllUsers() {
         if (users.values().isEmpty()) {
             log.warn("Список пользователей пуст.");
@@ -27,7 +26,6 @@ public class UserRepositoryImpl implements UserRepository {
         return new ArrayList<>(users.values());
     }
 
-    @Override
     public User getUserById(long userId) {
         if (users.isEmpty()) {
             log.warn("Список пользователей пуст.");
@@ -41,7 +39,6 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    @Override
     public User saveNewUser(User user) {
         for (User existingUser : users.values()) {
             if (existingUser.getEmail().equals(user.getEmail())) {
@@ -55,7 +52,6 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    @Override
     public User updateUser(User user) {
         if (!users.containsKey(user.getId())) {
             log.warn("Пользователя с id = {} не существует.", user.getId());
@@ -66,7 +62,6 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    @Override
     public void deleteUser(long userId) {
         if (!users.containsKey(userId)) {
             log.warn("Пользователя с id = {} не существует.", userId);

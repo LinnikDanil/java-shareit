@@ -13,18 +13,16 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class ItemRepositoryImpl implements ItemRepository {
+public class ItemRepositoryImpl {
     private final HashMap<Long, Item> items;
     private long id = 0;
 
-    @Override
     public List<Item> getUserItems(long userId) {
         return items.values().stream()
                 .filter(item -> item.getOwner().getId() == userId)
                 .collect(Collectors.toList());
     }
 
-    @Override
     public Item getItemById(long itemId) {
         if (items.isEmpty()) {
             log.warn("Список предметов пуст.");
@@ -39,7 +37,6 @@ public class ItemRepositoryImpl implements ItemRepository {
         return item;
     }
 
-    @Override
     public List<Item> searchItems(String text) {
         return items.values().stream()
                 .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
@@ -48,7 +45,6 @@ public class ItemRepositoryImpl implements ItemRepository {
                 .collect(Collectors.toList());
     }
 
-    @Override
     public Item addItem(Item item) {
         item.setId(generatedNewId());
         items.put(item.getId(), item);
@@ -56,7 +52,6 @@ public class ItemRepositoryImpl implements ItemRepository {
         return item;
     }
 
-    @Override
     public Item updateItem(Item item, long itemId, long userId) {
         items.put(itemId, item);
         return item;
