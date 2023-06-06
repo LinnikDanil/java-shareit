@@ -8,7 +8,6 @@ import lombok.ToString;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 
 @Data
 @NoArgsConstructor

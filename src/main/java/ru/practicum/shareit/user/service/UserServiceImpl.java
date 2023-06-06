@@ -40,25 +40,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(long userId) {
         log.info("Вывод пользователя с id = {}:", userId);
-        Optional<User> optUser = userRepository.findById(userId);
-        if (optUser.isEmpty()){
-            log.warn("Пользователя с id = {} не существует.", userId);
-            throw new UserNotFoundException(String.format("Пользователя с id = %s не существует", userId));
-        }
 
-        return UserMapper.toUserDto(optUser.get());
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
+                String.format("Пользователь с id = %s не найден", userId)));
+
+        return UserMapper.toUserDto(user);
     }
 
     @Transactional
     @Override
     public UserDto saveUser(UserDto userDto) {
         log.info("Сохранение пользователя:");
-
-//        Optional<User> optExistingUser = userRepository.findByEmail(userDto.getEmail());
-//        if (optExistingUser.isPresent()) {
-//            log.warn("Пользователь с email = {} уже существует.", userDto.getEmail());
-//            throw new UserAlreadyExistException(String.format("Email %s уже существует.", userDto.getEmail()));
-//        }
 
         User user = userRepository.save(UserMapper.toUser(userDto));
         log.info("Пользователь сохранён с id = {}.", user.getId());
@@ -69,14 +61,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto, long userId) {
         log.info("Обновление пользователя:");
-        Optional<User> optExistingUser = userRepository.findById(userId);
 
-        if (optExistingUser.isEmpty()){
-            log.warn("Пользователя с id = {} не существует.", userId);
-            throw new UserNotFoundException(String.format("Пользователя с id = %s не существует", userId));
-        }
-
-        User existingUser = optExistingUser.get();
+        User existingUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
+                String.format("Пользователь с id = %s не найден", userId)));
 
         if (userDto.getName() != null) {
             if (userDto.getName().isBlank()) {
