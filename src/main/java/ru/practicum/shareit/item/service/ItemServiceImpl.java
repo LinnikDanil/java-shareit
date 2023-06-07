@@ -48,7 +48,6 @@ public class ItemServiceImpl implements ItemService {
         List<Item> items = itemRepository.findAllByOwnerId(userId);
 
 
-
         for (Item item : items) {
             BookingForItemDto lastBooking = BookingMapperForItem.toBookingForItemDto(
                     bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(
@@ -158,7 +157,7 @@ public class ItemServiceImpl implements ItemService {
                 String.format("Предмета с id = %s не существует", itemId)));
 
         bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndEndBefore(
-                itemId, userId, BookingStatus.APPROVED, LocalDateTime.now())
+                        itemId, userId, BookingStatus.APPROVED, LocalDateTime.now())
                 .orElseThrow(() -> new BookingValidationException("Пользователь не бронировал данную вещь"));
 
         Comment comment = commentRepository.save(CommentMapper.toComment(commentDto, item, user));

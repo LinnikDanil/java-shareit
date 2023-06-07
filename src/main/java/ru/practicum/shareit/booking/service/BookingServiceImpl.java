@@ -48,7 +48,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingMapper.toBooking(bookingRequestDto, bookerId);
 
         //Проверка пользователь - владелец вещи
-        if (item.getOwner().getId().equals(bookerId)){
+        if (item.getOwner().getId().equals(bookerId)) {
             throw new BookingNotFoundException("Пользователь не может арендовать свою же вещь.");
         }
 
