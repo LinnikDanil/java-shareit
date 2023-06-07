@@ -6,10 +6,8 @@ import ru.practicum.shareit.booking.exception.BookingValidationException;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -38,7 +36,7 @@ public class BookingMapper {
                 null,
                 start,
                 end,
-                ItemMapper.toItem(itemService.getItemById(bookingDto.getItemId())),
+                ItemMapper.toItem(itemService.getItemById(bookingDto.getItemId(), userId)),
                 UserMapper.toUser(userService.getUserById(userId)),
                 BookingStatus.WAITING
         );

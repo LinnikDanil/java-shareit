@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
@@ -29,6 +30,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
     private final BookingMapper bookingMapper;
 
+    @Transactional
     @Override
     public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, Long bookerId) {
         // Проверка на существования пользователя
@@ -53,6 +55,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toBookingResponseDto(bookingRepository.save(booking));
     }
 
+    @Transactional
     @Override
     public BookingResponseDto confirmBooking(Long bookingId, boolean approved, long userId) {
         checkUser(userId);
@@ -72,6 +75,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingMapper.toBookingResponseDto(bookingRepository.save(booking));
     }
 
+    @Transactional
     @Override
     public BookingResponseDto getBooking(Long bookingId, long userId) {
         checkUser(userId);
@@ -88,6 +92,7 @@ public class BookingServiceImpl implements BookingService {
     /**
      * Выводит список всех броней у пользователя, который их брал
      **/
+    @Transactional
     @Override
     public List<BookingResponseDto> getBookings(String state, long userId) {
         checkUser(userId);
@@ -128,6 +133,7 @@ public class BookingServiceImpl implements BookingService {
     /**
      * Выводит список всех бронирований для вещей у пользователя, который их выставлял
      **/
+    @Transactional
     @Override
     public List<BookingResponseDto> getOwnerBookings(String state, long userId) {
         checkUser(userId);
