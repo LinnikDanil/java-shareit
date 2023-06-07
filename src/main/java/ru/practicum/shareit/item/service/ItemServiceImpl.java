@@ -71,20 +71,21 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(
                 String.format("Предмета с id = %s не существует", itemId)));
 
-        Booking lastBook = bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(
+        Booking lastBooking = bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(
                 item.getId(), userId, LocalDateTime.now(), BookingStatus.APPROVED);
-        BookingForItemDto lastBooking = BookingMapperForItem.toBookingForItemDto(lastBook);
-
-        Booking nextBook = null;
-        if (lastBook != null) {
-            nextBook = bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartAfterAndStatusOrderByStartAsc(
-                    item.getId(), userId, lastBook.getStart(), BookingStatus.APPROVED);
+        Booking nextBooking = null;
+        if (lastBooking != null) {
+            nextBooking = bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartAfterAndStatusOrderByStartAsc(
+                    item.getId(), userId, lastBooking.getStart(), BookingStatus.APPROVED);
         }
-        BookingForItemDto nextBooking = BookingMapperForItem.toBookingForItemDto(nextBook);
 
         List<CommentDto> commentsDto = CommentMapper.toCommentDto(commentRepository.findAllByItemId(itemId));
 
-        return ItemMapper.toItemWithBookingDto(item, lastBooking, nextBooking, commentsDto);
+        return ItemMapper.toItemWithBookingDto(
+                item,
+                BookingMapperForItem.toBookingForItemDto(lastBooking),
+                BookingMapperForItem.toBookingForItemDto(nextBooking),
+                commentsDto);
     }
 
     @Override
