@@ -29,7 +29,7 @@ public class ItemMapper {
         );
     }
 
-    public static ItemFullDto toItemWithBookingDto(
+    public static ItemFullDto toItemFullDto(
             Item item, BookingForItemDto lastBooking, BookingForItemDto nextBooking, List<CommentDto> comments) {
         return new ItemFullDto(
                 item.getId(),

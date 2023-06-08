@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.exception.BookingValidationException;
 import ru.practicum.shareit.booking.model.Booking;
@@ -25,6 +24,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,26 +42,41 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemFullDto> getUserItems(long userId) {
         log.info("Вывод всех предметов пользователя с id = {}:", userId);
 
-        //Проверка на существование пользователя
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
                 String.format("Пользователь с id = %s не найден", userId)));
 
-        List<ItemFullDto> itemsDto = new ArrayList<>();
         List<Item> items = itemRepository.findAllByOwnerId(userId);
+        List<Long> itemsId = items
+                .stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
 
+        Map<Item, List<Comment>> comments = commentRepository.findAllByItemIdIn(itemsId)
+                .stream()
+                .collect(Collectors.groupingBy(Comment::getItem));
 
+        Map<Item, Booking> lastBookings = bookingRepository
+                .findLastBookings(
+                        userId, LocalDateTime.now())
+                .stream()
+                .collect(Collectors.toMap(Booking::getItem, Function.identity()));
+
+        Map<Item, Booking> nextBookings = bookingRepository
+                .findNextBooking(
+                        userId, LocalDateTime.now())
+                .stream()
+                .collect(Collectors.toMap(Booking::getItem, Function.identity()));
+
+        List<ItemFullDto> itemsDto = new ArrayList<>();
         for (Item item : items) {
-            BookingForItemDto lastBooking = BookingMapper.toBookingForItemDto(
-                    bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(
-                            item.getId(), userId, LocalDateTime.now(), BookingStatus.APPROVED));
-            BookingForItemDto nextBooking = BookingMapper.toBookingForItemDto(
-                    bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartAfterAndStatusOrderByStartAsc(
-                            item.getId(), userId, LocalDateTime.now(), BookingStatus.APPROVED));
-            List<CommentDto> commentsDto = CommentMapper.toCommentDto(commentRepository.findAllByItemId(item.getId()));
-            itemsDto.add(ItemMapper.toItemWithBookingDto(item, lastBooking, nextBooking, commentsDto));
+            ItemFullDto itemFullDto = ItemMapper.toItemFullDto(
+                    item,
+                    BookingMapper.toBookingForItemDto(lastBookings.get(item)),
+                    BookingMapper.toBookingForItemDto(nextBookings.get(item)),
+                    CommentMapper.toCommentDto(comments.get(item))
+            );
+            itemsDto.add(itemFullDto);
         }
-        itemsDto.sort((o1, o2) -> (int) (o1.getId() - o2.getId()));
-
         return itemsDto;
     }
 
@@ -82,7 +98,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<CommentDto> commentsDto = CommentMapper.toCommentDto(commentRepository.findAllByItemId(itemId));
 
-        return ItemMapper.toItemWithBookingDto(
+        return ItemMapper.toItemFullDto(
                 item,
                 BookingMapper.toBookingForItemDto(lastBooking),
                 BookingMapper.toBookingForItemDto(nextBooking),

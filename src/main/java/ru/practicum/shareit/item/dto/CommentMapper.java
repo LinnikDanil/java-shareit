@@ -20,6 +20,9 @@ public class CommentMapper {
     }
 
     public static List<CommentDto> toCommentDto(Iterable<Comment> comments) {
+        if (comments == null) {
+            return null;
+        }
         List<CommentDto> commentsDto = new ArrayList<>();
         for (Comment comment : comments) {
             commentsDto.add(toCommentDto(comment));
