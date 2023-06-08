@@ -9,7 +9,9 @@ import javax.persistence.*;
 @Table(name = "items")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

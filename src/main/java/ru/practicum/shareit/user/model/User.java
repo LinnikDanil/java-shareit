@@ -8,7 +8,9 @@ import javax.persistence.*;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

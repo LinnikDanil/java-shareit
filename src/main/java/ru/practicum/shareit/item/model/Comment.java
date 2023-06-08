@@ -7,12 +7,13 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
-
 @Entity
 @Table(name = "comments")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
