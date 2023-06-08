@@ -2,29 +2,55 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.item.model.Item;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-                .owner(item.getOwner())
-                .request(item.getRequest())
-                .build();
+        return new ItemDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getAvailable()
+        );
     }
 
     public static Item toItem(ItemDto itemDto) {
-        return Item.builder()
-                .id(itemDto.getId())
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
-                .owner(itemDto.getOwner())
-                .request(itemDto.getRequest())
-                .build();
+        return new Item(
+                itemDto.getId(),
+                itemDto.getName(),
+                itemDto.getDescription(),
+                itemDto.getAvailable(),
+                null,
+                null
+        );
+    }
+
+    public static ItemFullDto toItemFullDto(
+            Item item, BookingForItemDto lastBooking, BookingForItemDto nextBooking, List<CommentDto> comments) {
+        return new ItemFullDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getAvailable(),
+                lastBooking,
+                nextBooking,
+                comments
+        );
+    }
+
+    public static Item toItem(ItemFullDto itemDto) {
+        return new Item(
+                itemDto.getId(),
+                itemDto.getName(),
+                itemDto.getDescription(),
+                itemDto.getAvailable(),
+                null,
+                null
+        );
     }
 }
+

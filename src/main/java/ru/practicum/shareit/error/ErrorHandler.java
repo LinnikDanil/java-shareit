@@ -7,6 +7,11 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.booking.controller.BookingController;
+import ru.practicum.shareit.booking.exception.BookingNotFoundException;
+import ru.practicum.shareit.booking.exception.BookingValidationException;
+import ru.practicum.shareit.booking.exception.ItemUnavailableException;
+import ru.practicum.shareit.booking.exception.UserNotOwnerBooking;
 import ru.practicum.shareit.item.controller.ItemController;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemOwnerIsDefferentException;
@@ -15,63 +20,91 @@ import ru.practicum.shareit.user.exception.UserAlreadyExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 
-@RestControllerAdvice(assignableTypes = {UserController.class, ItemController.class})
+@RestControllerAdvice(assignableTypes = {UserController.class, ItemController.class, BookingController.class})
 @Slf4j
 public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse userNotFound(final UserNotFoundException e) {
-        log.debug("Получен статус 404 Not Found {}", e.getMessage(), e);
+    public ErrorResponse handlerUserNotFoundException(final UserNotFoundException e) {
+        log.error("Получен статус 404 Not Found {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse userAlreadyExist(final UserAlreadyExistException e) {
-        log.debug("Получен статус 409 Conflict {}", e.getMessage(), e);
+    public ErrorResponse handlerUserAlreadyExistException(final UserAlreadyExistException e) {
+        log.error("Получен статус 409 Conflict {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMissingHeader(final MissingRequestHeaderException e) {
-        log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
+    public ErrorResponse handlerMissingRequestHeaderException(final MissingRequestHeaderException e) {
+        log.error("Получен статус 400 Bad Request {}", e.getMessage(), e);
         return new ErrorResponse("Заголовок отсутствует: " + e.getHeaderName());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse itemNotFound(final ItemNotFoundException e) {
-        log.debug("Получен статус 404 Not Found {}", e.getMessage(), e);
+    public ErrorResponse handlerItemNotFoundException(final ItemNotFoundException e) {
+        log.error("Получен статус 404 Not Found {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse itemOwnerIsDifferent(final ItemOwnerIsDefferentException e) {
-        log.debug("Получен статус 403 Forbidden {}", e.getMessage(), e);
+    public ErrorResponse handlerItemOwnerIsDefferentException(final ItemOwnerIsDefferentException e) {
+        log.error("Получен статус 403 Forbidden {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse methodArgumentNotValid(final MethodArgumentNotValidException e) {
-        log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
+    public ErrorResponse handlerMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        log.error("Получен статус 400 Bad Request {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse illegalArgument(final IllegalArgumentException e) {
-        log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
+    public ErrorResponse handlerIllegalArgumentException(final IllegalArgumentException e) {
+        log.error("Получен статус 400 Bad Request {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse internalServer(final Exception e) {
-        log.debug("Получен статус 500 Internal Server {}", e.getMessage(), e);
+    public ErrorResponse handlerThrowable(final Throwable e) {
+        log.error("Получен статус 500 Internal Server {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handlerBookingNotFoundException(final BookingNotFoundException e) {
+        log.error("Получен статус 404 Not Found {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handlerUserNotOwnerBooking(final UserNotOwnerBooking e) {
+        log.error("Получен статус 404 Not Found {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerBookingValidationException(final BookingValidationException e) {
+        log.error("Получен статус 400 Bad Request - ошибка валидации {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerItemUnavailableException(final ItemUnavailableException e) {
+        log.error("Получен статус 400 Bad Request - {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 }

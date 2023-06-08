@@ -4,32 +4,34 @@ import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+
 
 @Entity
-@Table(name = "items")
+@Table(name = "comments")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
-public class Item {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
-    private String description;
-
-    private Boolean available;
+    private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @JoinColumn(name = "owner_id")
-    private User owner;
+    @JoinColumn(name = "item_id")
+    private Item item;
 
-    @Column(name = "request_id")
-    private Long request;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JoinColumn(name = "author_id")
+    private User author;
+
+    private LocalDateTime created;
 
     @Override
     public int hashCode() {
@@ -39,7 +41,7 @@ public class Item {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Item)) return false;
-        return id != null && id.equals(((Item) obj).getId());
+        if (!(obj instanceof Comment)) return false;
+        return id != null && id.equals(((Comment) obj).getId());
     }
 }
