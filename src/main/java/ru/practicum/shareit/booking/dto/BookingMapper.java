@@ -1,26 +1,22 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.exception.BookingValidationException;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-@RequiredArgsConstructor
+@UtilityClass
 public class BookingMapper {
-    private final UserService userService;
-    private final ItemService itemService;
 
-    public Booking toBooking(BookingRequestDto bookingDto, Long userId) {
+    public Booking toBooking(BookingRequestDto bookingDto, Item item, User user) {
         LocalDateTime start = bookingDto.getStart();
         LocalDateTime end = bookingDto.getEnd();
 
@@ -36,8 +32,8 @@ public class BookingMapper {
                 null,
                 start,
                 end,
-                ItemMapper.toItem(itemService.getItemById(bookingDto.getItemId(), userId)),
-                UserMapper.toUser(userService.getUserById(userId)),
+                item,
+                user,
                 BookingStatus.WAITING
         );
     }
@@ -59,5 +55,13 @@ public class BookingMapper {
             bookingsDto.add(toBookingResponseDto(booking));
         }
         return bookingsDto;
+    }
+
+    public BookingForItemDto toBookingForItemDto(Booking booking) {
+        if (booking == null) return null;
+        return new BookingForItemDto(
+                booking.getId(),
+                booking.getBooker().getId()
+        );
     }
 }

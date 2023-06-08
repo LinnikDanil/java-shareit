@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingForItemDto;
+import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.exception.BookingValidationException;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -49,10 +50,10 @@ public class ItemServiceImpl implements ItemService {
 
 
         for (Item item : items) {
-            BookingForItemDto lastBooking = BookingMapperForItem.toBookingForItemDto(
+            BookingForItemDto lastBooking = BookingMapper.toBookingForItemDto(
                     bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(
                             item.getId(), userId, LocalDateTime.now(), BookingStatus.APPROVED));
-            BookingForItemDto nextBooking = BookingMapperForItem.toBookingForItemDto(
+            BookingForItemDto nextBooking = BookingMapper.toBookingForItemDto(
                     bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartAfterAndStatusOrderByStartAsc(
                             item.getId(), userId, LocalDateTime.now(), BookingStatus.APPROVED));
             List<CommentDto> commentsDto = CommentMapper.toCommentDto(commentRepository.findAllByItemId(item.getId()));
@@ -83,8 +84,8 @@ public class ItemServiceImpl implements ItemService {
 
         return ItemMapper.toItemWithBookingDto(
                 item,
-                BookingMapperForItem.toBookingForItemDto(lastBooking),
-                BookingMapperForItem.toBookingForItemDto(nextBooking),
+                BookingMapper.toBookingForItemDto(lastBooking),
+                BookingMapper.toBookingForItemDto(nextBooking),
                 commentsDto);
     }
 

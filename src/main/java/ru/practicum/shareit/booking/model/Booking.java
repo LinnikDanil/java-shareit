@@ -1,20 +1,17 @@
 package ru.practicum.shareit.booking.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "bookings")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter @ToString
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +35,16 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Booking)) return false;
+        return id != null && id.equals(((Booking) obj).getId());
+    }
 }

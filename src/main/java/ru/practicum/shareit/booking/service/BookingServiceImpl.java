@@ -17,6 +17,7 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repositrory.ItemRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -28,13 +29,12 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private final BookingMapper bookingMapper;
 
     @Transactional
     @Override
     public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, Long bookerId) {
         // Проверка на существования пользователя
-        checkUser(bookerId);
+        User user = checkUser(bookerId);
 
         //Проверка на существование предмета
         Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(() -> new UserNotFoundException(
@@ -45,14 +45,14 @@ public class BookingServiceImpl implements BookingService {
             throw new ItemUnavailableException("Статус данной вещи недоступен.");
         }
 
-        Booking booking = bookingMapper.toBooking(bookingRequestDto, bookerId);
-
         //Проверка пользователь - владелец вещи
         if (item.getOwner().getId().equals(bookerId)) {
             throw new BookingNotFoundException("Пользователь не может арендовать свою же вещь.");
         }
 
-        return bookingMapper.toBookingResponseDto(bookingRepository.save(booking));
+        Booking booking = BookingMapper.toBooking(bookingRequestDto, item, user);
+
+        return BookingMapper.toBookingResponseDto(bookingRepository.save(booking));
     }
 
     @Transactional
@@ -72,7 +72,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
-        return bookingMapper.toBookingResponseDto(bookingRepository.save(booking));
+        return BookingMapper.toBookingResponseDto(bookingRepository.save(booking));
     }
 
     @Transactional
@@ -86,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
                     String.format("Пользователь с id = %s не имеет отношения к бронированию.", userId));
         }
 
-        return bookingMapper.toBookingResponseDto(booking);
+        return BookingMapper.toBookingResponseDto(booking);
     }
 
     /**
@@ -127,7 +127,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new BookingValidationException(String.format("Unknown state: %s", state));
         }
 
-        return bookingMapper.toBookingResponseDto(bookings);
+        return BookingMapper.toBookingResponseDto(bookings);
     }
 
     /**
@@ -168,11 +168,11 @@ public class BookingServiceImpl implements BookingService {
                 throw new BookingValidationException(String.format("Unknown state: %s", state));
         }
 
-        return bookingMapper.toBookingResponseDto(bookings);
+        return BookingMapper.toBookingResponseDto(bookings);
     }
 
-    private void checkUser(long userId) {
-        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
+    private User checkUser(long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
                 String.format("Пользователя с id = %s не существует", userId)));
     }
 }

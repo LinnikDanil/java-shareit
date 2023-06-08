@@ -1,19 +1,18 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
+
 @Entity
 @Table(name = "comments")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter @ToString
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +31,16 @@ public class Comment {
     private User author;
 
     private LocalDateTime created;
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Comment)) return false;
+        return id != null && id.equals(((Comment) obj).getId());
+    }
 }
