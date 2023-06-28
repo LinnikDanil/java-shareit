@@ -2,6 +2,10 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -45,7 +49,10 @@ public class ItemServiceImpl implements ItemService {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
                 String.format("Пользователь с id = %s не найден", userId)));
 
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
+        Page<Item> itemsPage = itemRepository.findAllByOwnerId(userId, pageable);
+        List<Item> items = itemsPage.getContent();
+
         List<Long> itemsId = items
                 .stream()
                 .map(Item::getId)
@@ -111,9 +118,12 @@ public class ItemServiceImpl implements ItemService {
         if (text.isEmpty()) {
             return Collections.emptyList();
         }
-        return itemRepository.search(text).stream()
-                .map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
+        Page<Item> itemsPage = itemRepository.search(text, pageable);
+        List<Item> items = itemsPage.getContent();
+
+        return ItemMapper.toItemDto(items);
     }
 
     @Transactional
