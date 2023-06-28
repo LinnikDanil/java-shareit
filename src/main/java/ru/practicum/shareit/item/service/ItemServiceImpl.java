@@ -39,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public List<ItemFullDto> getUserItems(long userId) {
+    public List<ItemFullDto> getUserItems(long userId, int from, int size) {
         log.info("Вывод всех предметов пользователя с id = {}:", userId);
 
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
@@ -106,7 +106,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String text) {
+    public List<ItemDto> searchItems(String text, int from, int size) {
         log.info("Поиск предметов содержащих <{}>:", text);
         if (text.isEmpty()) {
             return Collections.emptyList();

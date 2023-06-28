@@ -15,12 +15,20 @@ import ru.practicum.shareit.booking.exception.UserNotOwnerBooking;
 import ru.practicum.shareit.item.controller.ItemController;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemOwnerIsDefferentException;
+import ru.practicum.shareit.request.ItemRequestController;
+import ru.practicum.shareit.request.ItemRequestNotFoundException;
+import ru.practicum.shareit.request.ItemRequestNotValidException;
 import ru.practicum.shareit.user.controller.UserController;
 import ru.practicum.shareit.user.exception.UserAlreadyExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
 
 
-@RestControllerAdvice(assignableTypes = {UserController.class, ItemController.class, BookingController.class})
+@RestControllerAdvice(assignableTypes = {
+        UserController.class,
+        ItemController.class,
+        BookingController.class,
+        ItemRequestController.class
+})
 @Slf4j
 public class ErrorHandler {
 
@@ -105,6 +113,20 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlerItemUnavailableException(final ItemUnavailableException e) {
         log.error("Получен статус 400 Bad Request - {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handlerItemRequestNotFoundException(final ItemRequestNotFoundException e) {
+        log.error("Получен статус 404 Not Found {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerItemRequestNotValidException(final ItemRequestNotValidException e) {
+        log.error("Получен статус 400 Bad Request - ошибка валидации {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
 }

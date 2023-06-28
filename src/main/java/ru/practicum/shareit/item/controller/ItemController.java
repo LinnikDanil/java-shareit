@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.check.Checker;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemFullDto;
@@ -17,8 +18,11 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemFullDto> getUserItems(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.getUserItems(userId);
+    public List<ItemFullDto> getUserItems(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @RequestParam(defaultValue = "0") Integer from,
+                                          @RequestParam(defaultValue = "10") Integer size) {
+        Checker.checkFromAndSize(from, size);
+        return itemService.getUserItems(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
@@ -27,8 +31,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItems(@RequestParam String text) {
-        return itemService.searchItems(text);
+    public List<ItemDto> searchItems(@RequestParam String text,
+                                     @RequestParam(defaultValue = "0") Integer from,
+                                     @RequestParam(defaultValue = "10") Integer size) {
+        Checker.checkFromAndSize(from, size);
+        return itemService.searchItems(text, from, size);
     }
 
     @PostMapping

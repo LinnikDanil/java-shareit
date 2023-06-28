@@ -31,6 +31,7 @@ public class Comment {
     @JoinColumn(name = "author_id")
     private User author;
 
+    @Column(name = "created_date")
     private LocalDateTime created;
 
     @Override

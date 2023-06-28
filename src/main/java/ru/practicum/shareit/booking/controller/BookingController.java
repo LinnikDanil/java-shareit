@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.check.Checker;
 
 import java.util.List;
 
@@ -35,13 +36,19 @@ public class BookingController {
 
     @GetMapping
     public List<BookingResponseDto> getBookings(@RequestParam(defaultValue = "ALL") String state,
-                                                @RequestHeader("X-Sharer-User-Id") long userId) {
-        return bookingService.getBookings(state, userId);
+                                                @RequestHeader("X-Sharer-User-Id") long userId,
+                                                @RequestParam(defaultValue = "0") Integer from,
+                                                @RequestParam(defaultValue = "10") Integer size) {
+        Checker.checkFromAndSize(from, size);
+        return bookingService.getBookings(state, userId, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingResponseDto> getOwnerBookings(@RequestParam(defaultValue = "ALL") String state,
-                                                     @RequestHeader("X-Sharer-User-Id") long userId) {
-        return bookingService.getOwnerBookings(state, userId);
+                                                     @RequestHeader("X-Sharer-User-Id") long userId,
+                                                     @RequestParam(defaultValue = "0") Integer from,
+                                                     @RequestParam(defaultValue = "10") Integer size) {
+        Checker.checkFromAndSize(from, size);
+        return bookingService.getOwnerBookings(state, userId, from, size);
     }
 }

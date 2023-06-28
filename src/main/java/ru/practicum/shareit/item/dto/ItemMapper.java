@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
@@ -14,7 +15,8 @@ public class ItemMapper {
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getAvailable()
+                item.getAvailable(),
+                item.getRequest()
         );
     }
 
@@ -25,7 +27,7 @@ public class ItemMapper {
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
                 null,
-                null
+                itemDto.getRequestId()
         );
     }
 
@@ -51,6 +53,12 @@ public class ItemMapper {
                 null,
                 null
         );
+    }
+
+    public static List<ItemDto> toItemDto(List<Item> items) {
+        return items.stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 }
 
