@@ -13,9 +13,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
-@SpringBootTest(
-        properties = "db.name=test",
-        webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserServiceImplIntegrationTest {
     @Autowired

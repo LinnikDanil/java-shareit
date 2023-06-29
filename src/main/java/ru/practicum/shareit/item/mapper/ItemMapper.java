@@ -1,8 +1,11 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingForItemDto;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemFullDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
@@ -44,21 +47,9 @@ public class ItemMapper {
         );
     }
 
-    public static Item toItem(ItemFullDto itemDto) {
-        return new Item(
-                itemDto.getId(),
-                itemDto.getName(),
-                itemDto.getDescription(),
-                itemDto.getAvailable(),
-                null,
-                null
-        );
-    }
-
     public static List<ItemDto> toItemDto(List<Item> items) {
         return items.stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 }
-
