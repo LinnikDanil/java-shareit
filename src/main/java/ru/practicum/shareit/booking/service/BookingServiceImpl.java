@@ -17,6 +17,7 @@ import ru.practicum.shareit.booking.exception.UserNotOwnerBooking;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repositrory.ItemRepository;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
@@ -40,7 +41,7 @@ public class BookingServiceImpl implements BookingService {
         User user = checkUser(bookerId);
 
         //Проверка на существование предмета
-        Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(() -> new UserNotFoundException(
+        Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(() -> new ItemNotFoundException(
                 String.format("Предмета с id = %s не существует", bookingRequestDto.getItemId())));
 
         //Проверка на доступность предмета

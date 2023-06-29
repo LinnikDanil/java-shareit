@@ -1,9 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -49,15 +47,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
     @Query(value = "SELECT b1.* " +
             "FROM bookings b1 " +
             "JOIN (" +
-                "SELECT item_id, MAX(start_date) as max_start_date " +
-                "FROM BOOKINGS b2 " +
-                "WHERE b2.ID in(" +
-                    "SELECT b3.id FROM BOOKINGS b3 " +
-                    "JOIN ITEMS i ON I.ID = B3.ITEM_ID " +
-                    "WHERE i.OWNER_ID = ? " +
-                    "AND b3.STATUS = 'APPROVED' " +
-                    "AND b3.START_DATE < ?) " +
-                "GROUP BY ITEM_ID) b2 " +
+            "SELECT item_id, MAX(start_date) as max_start_date " +
+            "FROM BOOKINGS b2 " +
+            "WHERE b2.ID in(" +
+            "SELECT b3.id FROM BOOKINGS b3 " +
+            "JOIN ITEMS i ON I.ID = B3.ITEM_ID " +
+            "WHERE i.OWNER_ID = ? " +
+            "AND b3.STATUS = 'APPROVED' " +
+            "AND b3.START_DATE < ?) " +
+            "GROUP BY ITEM_ID) b2 " +
             "ON b1.item_id = b2.item_id AND b1.start_date = b2.max_start_date", nativeQuery = true)
     List<Booking> findLastBookings(
             Long ownerId, LocalDateTime startDate);
@@ -65,15 +63,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
     @Query(value = "SELECT b1.* " +
             "FROM bookings b1 " +
             "JOIN (" +
-                "SELECT item_id, MIN(start_date) as min_start_date " +
-                "FROM BOOKINGS b2 " +
-                "WHERE b2.ID in(" +
-                    "SELECT b3.id FROM BOOKINGS b3 " +
-                    "JOIN ITEMS i ON I.ID = B3.ITEM_ID " +
-                    "WHERE i.OWNER_ID = ? " +
-                    "AND b3.STATUS = 'APPROVED' " +
-                    "AND b3.START_DATE >= ?) " +
-                "GROUP BY ITEM_ID) b2 " +
+            "SELECT item_id, MIN(start_date) as min_start_date " +
+            "FROM BOOKINGS b2 " +
+            "WHERE b2.ID in(" +
+            "SELECT b3.id FROM BOOKINGS b3 " +
+            "JOIN ITEMS i ON I.ID = B3.ITEM_ID " +
+            "WHERE i.OWNER_ID = ? " +
+            "AND b3.STATUS = 'APPROVED' " +
+            "AND b3.START_DATE >= ?) " +
+            "GROUP BY ITEM_ID) b2 " +
             "ON b1.item_id = b2.item_id AND b1.start_date = b2.min_start_date", nativeQuery = true)
     List<Booking> findNextBooking(
             Long ownerId, LocalDateTime startDate);

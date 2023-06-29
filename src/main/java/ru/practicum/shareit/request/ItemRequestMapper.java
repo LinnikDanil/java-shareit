@@ -22,7 +22,7 @@ public class ItemRequestMapper {
                 itemRequest.getUser(),
                 itemRequest.getDescription(),
                 itemRequest.getCreated()
-                );
+        );
     }
 
     public ItemRequestResponseFullDto toItemRequestResponseFullDto(ItemRequest itemRequest, List<ItemDto> items) {
