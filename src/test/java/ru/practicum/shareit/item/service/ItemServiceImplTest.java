@@ -33,6 +33,23 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ItemServiceImplTest {
+    private final User owner1 = User.builder()
+            .id(1L)
+            .name("owner")
+            .email("owner@mail.ru")
+            .build();
+    private final User owner2 = User.builder()
+            .id(2L)
+            .name("owner2")
+            .email("owner2@mail.ru")
+            .build();
+    private final Item item1 = Item.builder()
+            .id(1L)
+            .name("Бензопила")
+            .description("Аккумуляторная бензопила")
+            .available(true)
+            .owner(owner1)
+            .build();
     private ItemService itemService;
     @Mock
     private UserRepository userRepository;
@@ -42,26 +59,6 @@ class ItemServiceImplTest {
     private CommentRepository commentRepository;
     @Mock
     private BookingRepository bookingRepository;
-
-    private final User owner1 = User.builder()
-            .id(1L)
-            .name("owner")
-            .email("owner@mail.ru")
-            .build();
-
-    private final User owner2 = User.builder()
-            .id(2L)
-            .name("owner2")
-            .email("owner2@mail.ru")
-            .build();
-
-    private final Item item1 = Item.builder()
-            .id(1L)
-            .name("Бензопила")
-            .description("Аккумуляторная бензопила")
-            .available(true)
-            .owner(owner1)
-            .build();
 
     @BeforeEach
     public void setUp() {

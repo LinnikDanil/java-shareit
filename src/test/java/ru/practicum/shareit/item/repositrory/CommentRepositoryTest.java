@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.repositrory;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class CommentRepositoryTest {
@@ -40,18 +39,17 @@ class CommentRepositoryTest {
             .available(true)
             .owner(owner)
             .build();
-    private Item item2 = Item.builder()
-            .name("Газонокосилка")
-            .description("Аккумуляторная газонокосилка")
-            .available(true)
-            .owner(owner)
-            .build();
-
     private Comment comment1 = Comment.builder()
             .text("Класс!")
             .item(item1)
             .author(author)
             .created(LocalDateTime.now())
+            .build();
+    private Item item2 = Item.builder()
+            .name("Газонокосилка")
+            .description("Аккумуляторная газонокосилка")
+            .available(true)
+            .owner(owner)
             .build();
     private Comment comment2 = Comment.builder()
             .text("Супер!")
@@ -76,6 +74,7 @@ class CommentRepositoryTest {
         commentRepository.save(comment1);
         commentRepository.save(comment2);
     }
+
     @Test
     void findAllByItemId() {
         List<Comment> comments = commentRepository.findAllByItemId(item1.getId());

@@ -8,16 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import ru.practicum.shareit.booking.exception.BookingValidationException;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.item.exception.ItemNotFoundException;
-import ru.practicum.shareit.item.exception.ItemOwnerIsDefferentException;
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repositrory.CommentRepository;
 import ru.practicum.shareit.item.repositrory.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
@@ -38,26 +29,16 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ItemRequestServiceImplTest {
-    private ItemRequestService itemRequestService;
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private ItemRepository itemRepository;
-    @Mock
-    private ItemRequestRepository itemRequestRepository;
-
     private final User owner1 = User.builder()
             .id(1L)
             .name("owner")
             .email("owner@mail.ru")
             .build();
-
     private final User owner2 = User.builder()
             .id(2L)
             .name("owner2")
             .email("owner2@mail.ru")
             .build();
-
     private final Item item1 = Item.builder()
             .id(1L)
             .name("Бензопила")
@@ -65,7 +46,6 @@ class ItemRequestServiceImplTest {
             .available(true)
             .owner(owner1)
             .build();
-
     private final Item item2 = Item.builder()
             .id(2L)
             .name("Газонокосилка")
@@ -73,22 +53,26 @@ class ItemRequestServiceImplTest {
             .available(false)
             .owner(owner2)
             .build();
-
     private final ItemRequest itemRequest1 = ItemRequest.builder()
             .id(1L)
             .user(owner2)
             .description("Нужна бензопила")
             .created(LocalDateTime.now())
             .build();
-
     private final ItemRequest itemRequest2 = ItemRequest.builder()
             .id(2L)
             .user(owner1)
             .description("Нужна газонокосилка")
             .created(LocalDateTime.now())
             .build();
-
     private final ItemRequestDto itemRequestDto = new ItemRequestDto("Нужна газонокосилка");
+    private ItemRequestService itemRequestService;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private ItemRepository itemRepository;
+    @Mock
+    private ItemRequestRepository itemRequestRepository;
 
     @BeforeEach
     public void setUp() {

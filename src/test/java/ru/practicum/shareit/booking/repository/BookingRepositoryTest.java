@@ -86,7 +86,7 @@ class BookingRepositoryTest {
 
     @Test
     void findAllByBookerIdAndEndIsBefore() {
-                List<Booking> bookings = bookingRepository.findAllByBookerIdAndEndIsBefore(
+        List<Booking> bookings = bookingRepository.findAllByBookerIdAndEndIsBefore(
                 booker.getId(), LocalDateTime.of(2023, 7, 28, 10, 10),
                 Pageable.unpaged()).getContent();
 

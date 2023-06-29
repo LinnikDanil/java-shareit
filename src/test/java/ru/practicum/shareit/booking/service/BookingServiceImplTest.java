@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.service;
 
-import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,38 +39,26 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
-    private BookingService bookingService;
-    @Mock
-    private BookingRepository bookingRepository;
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private ItemRepository itemRepository;
-
     private final User booker1 = User.builder()
             .id(1L)
             .name("booker1")
             .email("booker1@mail.ru")
             .build();
-
     private final User booker2 = User.builder()
             .id(2L)
             .name("booker2")
             .email("booker2@mail.ru")
             .build();
-
     private final User owner1 = User.builder()
             .id(2L)
             .name("owner")
             .email("owner@mail.ru")
             .build();
-
     private final User owner2 = User.builder()
             .id(3L)
             .name("owner2")
             .email("owner2@mail.ru")
             .build();
-
     private final Item item1 = Item.builder()
             .id(1L)
             .name("Бензопила")
@@ -79,7 +66,11 @@ class BookingServiceImplTest {
             .available(true)
             .owner(owner1)
             .build();
-
+    private final BookingRequestDto bookingDto1 = new BookingRequestDto(
+            item1.getId(),
+            (LocalDateTime.now().plusHours(1)),
+            (LocalDateTime.now().plusDays(1))
+    );
     private final Item item2 = Item.builder()
             .id(2L)
             .name("Бензопила")
@@ -87,19 +78,18 @@ class BookingServiceImplTest {
             .available(false)
             .owner(owner2)
             .build();
-
-    private final BookingRequestDto bookingDto1 = new BookingRequestDto(
-            item1.getId(),
-            (LocalDateTime.now().plusHours(1)),
-            (LocalDateTime.now().plusDays(1))
-    );
-
     private final BookingRequestDto bookingDto2 = new BookingRequestDto(
             item2.getId(),
             (LocalDateTime.now().plusHours(1)),
             (LocalDateTime.now().plusDays(1))
     );
-
+    private BookingService bookingService;
+    @Mock
+    private BookingRepository bookingRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private ItemRepository itemRepository;
     private Booking booking1;
     private Booking booking2;
 

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Pageable;
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestRepository;
@@ -16,7 +15,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class ItemRepositoryTest {

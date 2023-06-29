@@ -5,20 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import ru.practicum.shareit.booking.exception.BookingValidationException;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.item.exception.ItemNotFoundException;
-import ru.practicum.shareit.item.exception.ItemOwnerIsDefferentException;
-import ru.practicum.shareit.item.model.Comment;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repositrory.CommentRepository;
-import ru.practicum.shareit.item.repositrory.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.exception.UserAlreadyExistException;
@@ -26,7 +12,6 @@ import ru.practicum.shareit.user.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,20 +23,19 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-    private UserService userService;
-    @Mock
-    private UserRepository userRepository;
     private final User user1 = User.builder()
             .id(1L)
             .name("user1")
             .email("user1@mail.ru")
             .build();
-
     private final User user2 = User.builder()
             .id(2L)
             .name("user2")
             .email("user2@mail.ru")
             .build();
+    private UserService userService;
+    @Mock
+    private UserRepository userRepository;
 
     @BeforeEach
     public void setUp() {
