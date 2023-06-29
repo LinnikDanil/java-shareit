@@ -52,7 +52,9 @@ public class BookingMapper {
     public List<BookingResponseDto> toBookingResponseDto(Iterable<Booking> bookings) {
         List<BookingResponseDto> bookingsDto = new ArrayList<>();
         for (Booking booking : bookings) {
-            bookingsDto.add(toBookingResponseDto(booking));
+            if (booking != null) {
+                bookingsDto.add(toBookingResponseDto(booking));
+            }
         }
         return bookingsDto;
     }

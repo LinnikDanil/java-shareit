@@ -86,7 +86,6 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(existingUser);
     }
 
-
     @Override
     public void deleteUser(long userId) {
         log.info("Удаление пользователя с id = {}:", userId);

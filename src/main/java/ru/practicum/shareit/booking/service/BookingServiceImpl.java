@@ -72,7 +72,7 @@ public class BookingServiceImpl implements BookingService {
 
         if (!booking.getItem().getOwner().getId().equals(userId)) {
             throw new UserNotOwnerBooking(
-                    String.format("Пользователь с id = %s не является владельцем бронирования.", userId));
+                    String.format("Пользователь с id = %s не является владельцем вещи, которую бронируют.", userId));
         }
 
         booking.setStatus(approved ? BookingStatus.APPROVED : BookingStatus.REJECTED);
