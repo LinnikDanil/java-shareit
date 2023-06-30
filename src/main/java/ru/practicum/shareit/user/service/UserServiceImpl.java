@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.exception.UserAlreadyExistException;
 import ru.practicum.shareit.user.exception.UserNotFoundException;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDto(existingUser);
     }
 
-
+    @Transactional
     @Override
     public void deleteUser(long userId) {
         log.info("Удаление пользователя с id = {}:", userId);

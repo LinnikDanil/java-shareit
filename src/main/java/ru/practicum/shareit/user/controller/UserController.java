@@ -3,9 +3,9 @@ package ru.practicum.shareit.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.user.dto.CreateValidationGroup;
-import ru.practicum.shareit.user.dto.UpdateValidationGroup;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.validation.CreateValidationGroup;
+import ru.practicum.shareit.user.dto.validation.UpdateValidationGroup;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;

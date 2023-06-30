@@ -2,16 +2,23 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.exception.BookingValidationException;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemFullDto;
 import ru.practicum.shareit.item.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.exception.ItemOwnerIsDefferentException;
+import ru.practicum.shareit.item.mapper.CommentMapper;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repositrory.CommentRepository;
@@ -37,15 +44,18 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
-    public List<ItemFullDto> getUserItems(long userId) {
+    public List<ItemFullDto> getUserItems(long userId, int from, int size) {
         log.info("Вывод всех предметов пользователя с id = {}:", userId);
 
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
                 String.format("Пользователь с id = %s не найден", userId)));
 
-        List<Item> items = itemRepository.findAllByOwnerId(userId);
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
+        Page<Item> itemsPage = itemRepository.findAllByOwnerId(userId, pageable);
+        List<Item> items = itemsPage.getContent();
+
         List<Long> itemsId = items
                 .stream()
                 .map(Item::getId)
@@ -80,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
         return itemsDto;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public ItemFullDto getItemById(long itemId, long userId) {
         log.info("Вывод предмета с id = {}:", itemId);
@@ -106,14 +116,17 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String text) {
+    public List<ItemDto> searchItems(String text, int from, int size) {
         log.info("Поиск предметов содержащих <{}>:", text);
         if (text.isEmpty()) {
             return Collections.emptyList();
         }
-        return itemRepository.search(text).stream()
-                .map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
+        Page<Item> itemsPage = itemRepository.search(text, pageable);
+        List<Item> items = itemsPage.getContent();
+
+        return ItemMapper.toItemDto(items);
     }
 
     @Transactional

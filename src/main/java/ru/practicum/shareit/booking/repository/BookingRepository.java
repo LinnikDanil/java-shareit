@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -12,25 +13,25 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long>, QuerydslPredicateExecutor<Booking> {
-    List<Booking> findAllByBookerIdAndStartIsBeforeAndEndIsAfter(
-            long userId, LocalDateTime start, LocalDateTime end, Sort sort);
+    Page<Booking> findAllByBookerIdAndStartIsBeforeAndEndIsAfter(
+            long userId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndEndIsBefore(long userId, LocalDateTime end, Sort sort);
+    Page<Booking> findAllByBookerIdAndEndIsBefore(long userId, LocalDateTime end, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndStartIsAfter(long userId, LocalDateTime end, Sort sort);
+    Page<Booking> findAllByBookerIdAndStartIsAfter(long userId, LocalDateTime end, Pageable pageable);
 
-    List<Booking> findAllByBookerIdAndStatus(long userId, BookingStatus status, Sort sort);
+    Page<Booking> findAllByBookerIdAndStatus(long userId, BookingStatus status, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerId(long userId, Sort sort);
+    Page<Booking> findAllByItemOwnerId(long userId, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfter(
-            long userId, LocalDateTime start, LocalDateTime end, Sort sort);
+    Page<Booking> findAllByItemOwnerIdAndStartIsBeforeAndEndIsAfter(
+            long userId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerIdAndEndIsBefore(long userId, LocalDateTime end, Sort sort);
+    Page<Booking> findAllByItemOwnerIdAndEndIsBefore(long userId, LocalDateTime end, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerIdAndStartIsAfter(long userId, LocalDateTime start, Sort sort);
+    Page<Booking> findAllByItemOwnerIdAndStartIsAfter(long userId, LocalDateTime start, Pageable pageable);
 
-    List<Booking> findAllByItemOwnerIdAndStatus(long userId, BookingStatus status, Sort sort);
+    Page<Booking> findAllByItemOwnerIdAndStatus(long userId, BookingStatus status, Pageable pageable);
 
     Booking findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(
             long itemId, long ownerId, LocalDateTime time, BookingStatus status);
@@ -41,18 +42,20 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
     Optional<Booking> findFirstByItemIdAndBookerIdAndStatusAndEndBefore(
             long itemId, long bookerId, BookingStatus status, LocalDateTime end);
 
+    Page<Booking> findAll(Pageable pageable);
+
     @Query(value = "SELECT b1.* " +
             "FROM bookings b1 " +
             "JOIN (" +
-                "SELECT item_id, MAX(start_date) as max_start_date " +
-                "FROM BOOKINGS b2 " +
-                "WHERE b2.ID in(" +
-                    "SELECT b3.id FROM BOOKINGS b3 " +
-                    "JOIN ITEMS i ON I.ID = B3.ITEM_ID " +
-                    "WHERE i.OWNER_ID = ? " +
-                    "AND b3.STATUS = 'APPROVED' " +
-                    "AND b3.START_DATE < ?) " +
-                "GROUP BY ITEM_ID) b2 " +
+            "SELECT item_id, MAX(start_date) as max_start_date " +
+            "FROM BOOKINGS b2 " +
+            "WHERE b2.ID in(" +
+            "SELECT b3.id FROM BOOKINGS b3 " +
+            "JOIN ITEMS i ON I.ID = B3.ITEM_ID " +
+            "WHERE i.OWNER_ID = ? " +
+            "AND b3.STATUS = 'APPROVED' " +
+            "AND b3.START_DATE < ?) " +
+            "GROUP BY ITEM_ID) b2 " +
             "ON b1.item_id = b2.item_id AND b1.start_date = b2.max_start_date", nativeQuery = true)
     List<Booking> findLastBookings(
             Long ownerId, LocalDateTime startDate);
@@ -60,16 +63,18 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
     @Query(value = "SELECT b1.* " +
             "FROM bookings b1 " +
             "JOIN (" +
-                "SELECT item_id, MIN(start_date) as min_start_date " +
-                "FROM BOOKINGS b2 " +
-                "WHERE b2.ID in(" +
-                    "SELECT b3.id FROM BOOKINGS b3 " +
-                    "JOIN ITEMS i ON I.ID = B3.ITEM_ID " +
-                    "WHERE i.OWNER_ID = ? " +
-                    "AND b3.STATUS = 'APPROVED' " +
-                    "AND b3.START_DATE >= ?) " +
-                "GROUP BY ITEM_ID) b2 " +
+            "SELECT item_id, MIN(start_date) as min_start_date " +
+            "FROM BOOKINGS b2 " +
+            "WHERE b2.ID in(" +
+            "SELECT b3.id FROM BOOKINGS b3 " +
+            "JOIN ITEMS i ON I.ID = B3.ITEM_ID " +
+            "WHERE i.OWNER_ID = ? " +
+            "AND b3.STATUS = 'APPROVED' " +
+            "AND b3.START_DATE >= ?) " +
+            "GROUP BY ITEM_ID) b2 " +
             "ON b1.item_id = b2.item_id AND b1.start_date = b2.min_start_date", nativeQuery = true)
     List<Booking> findNextBooking(
             Long ownerId, LocalDateTime startDate);
+
+    Page<Booking> findAllByBookerId(long bookerId, Pageable pageable);
 }
