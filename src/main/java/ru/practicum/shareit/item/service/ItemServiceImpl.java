@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<ItemFullDto> getUserItems(long userId, int from, int size) {
         log.info("Вывод всех предметов пользователя с id = {}:", userId);
@@ -90,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
         return itemsDto;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public ItemFullDto getItemById(long itemId, long userId) {
         log.info("Вывод предмета с id = {}:", itemId);

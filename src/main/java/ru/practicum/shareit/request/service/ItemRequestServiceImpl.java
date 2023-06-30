@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -34,6 +35,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+    @Transactional
     @Override
     public ItemRequestResponseDto createRequest(ItemRequestDto itemRequestDto, long userId) {
         log.info("Создание запроса предмета пользователем с id = {}.", userId);
@@ -45,6 +47,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return ItemRequestMapper.toItemRequestResponseDto(itemRequestRepository.save(itemRequest));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<ItemRequestResponseFullDto> getOwnerRequests(long userId) {
         log.info("Вывод всех запросов владельца с id = {}.", userId);
@@ -68,6 +71,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return toFullItemRequestResponseDto(itemRequests);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public ItemRequestResponseFullDto getRequestById(Long requestId, Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(

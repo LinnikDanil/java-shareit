@@ -79,7 +79,7 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingResponseDto(bookingRepository.save(booking));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public BookingResponseDto getBooking(Long bookingId, long userId) {
         checkUser(userId);
@@ -96,7 +96,7 @@ public class BookingServiceImpl implements BookingService {
     /**
      * Выводит список всех броней у пользователя, который их брал
      **/
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<BookingResponseDto> getBookings(String state, long userId, int from, int size) {
         checkUser(userId);
@@ -138,7 +138,7 @@ public class BookingServiceImpl implements BookingService {
     /**
      * Выводит список всех бронирований для вещей у пользователя, который их выставлял
      **/
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public List<BookingResponseDto> getOwnerBookings(String state, long userId, int from, int size) {
         checkUser(userId);

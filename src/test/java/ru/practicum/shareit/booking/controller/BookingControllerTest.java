@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -43,6 +43,7 @@ class BookingControllerTest {
     MockMvc mvc;
 
     @Test
+    @DisplayName("Создание бронирования")
     void createBooking() throws Exception {
         when(bookingService.createBooking(Mockito.any(BookingRequestDto.class), anyLong()))
                 .thenReturn(bookingResponseDto);
@@ -59,6 +60,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Подтверждение бронирования")
     void confirmBooking() throws Exception {
         BookingResponseDto approvedBookingResponseDto = new BookingResponseDto(
                 1L, LocalDateTime.now().plusHours(1), LocalDateTime.now().plusDays(1), new ItemDto(), new UserDto(), BookingStatus.APPROVED
@@ -76,6 +78,7 @@ class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Получение бронирования")
     void getBooking() throws Exception {
         when(bookingService.getBooking(anyLong(), anyLong()))
                 .thenReturn(bookingResponseDto);
@@ -88,8 +91,9 @@ class BookingControllerTest {
     }
 
     @Test
+    @DisplayName("Получение забронированных предметов")
     void getBookings() throws Exception {
-        List<BookingResponseDto> bookings = Arrays.asList(bookingResponseDto);
+        List<BookingResponseDto> bookings = List.of(bookingResponseDto);
         when(bookingService.getBookings(anyString(), anyLong(), anyInt(), anyInt()))
                 .thenReturn(bookings);
 
@@ -103,9 +107,10 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$[0].id", is(1), Integer.class));
     }
 
+    @DisplayName("Получение списка броинрования для предметов пользователя")
     @Test
     void getOwnerBookings() throws Exception {
-        List<BookingResponseDto> bookings = Arrays.asList(bookingResponseDto);
+        List<BookingResponseDto> bookings = List.of(bookingResponseDto);
         when(bookingService.getOwnerBookings(anyString(), anyLong(), anyInt(), anyInt()))
                 .thenReturn(bookings);
 

@@ -122,7 +122,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handlerThrowable(final Throwable e) {
+    public ErrorResponse handlerException(final Exception e) {
         log.error("Получен статус 500 Internal Server {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage());
     }
