@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.exception.BookingValidationException;
@@ -52,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
                 String.format("Пользователь с id = %s не найден", userId)));
 
-        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
+        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").ascending());
         Page<Item> itemsPage = itemRepository.findAllByOwnerId(userId, pageable);
         List<Item> items = itemsPage.getContent();
 
