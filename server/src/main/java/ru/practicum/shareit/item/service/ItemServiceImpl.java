@@ -30,7 +30,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -119,9 +118,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> searchItems(String text, int from, int size) {
         log.info("Поиск предметов содержащих <{}>:", text);
-        if (text.isEmpty()) {
-            return Collections.emptyList();
-        }
 
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
         Page<Item> itemsPage = itemRepository.search(text, pageable);

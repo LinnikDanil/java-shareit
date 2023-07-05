@@ -12,6 +12,7 @@ import ru.practicum.item.dto.ItemDto;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +43,7 @@ public class ItemController {
                                               @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                               @Positive @RequestParam(defaultValue = "10") Integer size) {
         if (text == null) throw new ValidationRequestException("Parameter 'text' cannot be null");
+        if (text.isEmpty()) return ResponseEntity.ok(Collections.emptyList());
         log.info("Search items, text={}, from = {}, size = {}", text, from, size);
         return itemClient.searchItems(userId, text, from, size);
     }

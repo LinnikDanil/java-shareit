@@ -162,16 +162,6 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void searchItemsWithEmptyText() {
-        String searchText = "";
-
-        List<ItemDto> response = itemService.searchItems(searchText, 0, 10);
-
-        assertEquals(0, response.size());
-        verify(itemRepository, never()).search(anyString(), any());
-    }
-
-    @Test
     void addItemW() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(owner1));
 
